@@ -47,8 +47,8 @@ class Directory extends Component {
     render() {
         return (
             <div className='directory-menu'>
-                {this.state.sections.map(({ title, imageUrl, id, size }) => (
-                    <MenuItem key={id} title={title} imageUrl={imageUrl} size={size}/>
+                {this.state.sections.map(({ id, ...otherSectionProps }) => (
+                    <MenuItem key={id} {...otherSectionProps} />
                 ))};
             </div>
         )
@@ -57,3 +57,8 @@ class Directory extends Component {
 }
 
 export default Directory;
+
+//the ...otherSectionProps spread operator (ES 6 syntax)
+//enables us to all the other props as the have the same 
+//format of key value pairs . id is different hence kept
+// key={id} title={title} imageUrl={imageUrl} size={size}
