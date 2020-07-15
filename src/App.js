@@ -7,19 +7,15 @@ import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { connect } from 'react-redux';
+import { setCurrentUser } from './redux/user/user.actions';
 
 class App extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      currentUser: null,
-    }
-  }
 
   unsubscribeFromAuth = null;
 
   componentDidMount() {
+    const { setCurrentUser } = this.props
     //below is an open subscription which is basically an open
     //messaging system btn our App and our FirebaseApp.
     //We don't have to fetch everytime our component mounts 
@@ -28,17 +24,18 @@ class App extends Component {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
-        userRef.onSnapshot(snapShot =>{
-          this.setState({
-            currentUser: {
-              id: snapShot.id,
-              ...snapShot.data()
-            }
+        //below we use this.props.setCurrentUser inplace of this.setState
+        //as we no longer have the constructor. Note: this.props is destructured above!
+        userRef.onSnapshot(snapShot => {
+          setCurrentUser({
+            id: snapShot.id,
+            ...snapShot.data()//STUDYME!
           });
         });
-      } else {
-        this.setState({ currentUser: userAuth });
-      }
+      } 
+      
+      setCurrentUser(userAuth);
+      
     });
   }
 
@@ -51,7 +48,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Header currentUser={this.state.currentUser} />
+        <Header />
         <Switch>
           <Route exact path='/' component={HomePage}/>
           <Route path='/shop' component={ShopPage} />
@@ -62,4 +59,17 @@ class App extends Component {
   };
 };
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+});
+
+export default connect(null, mapDispatchToProps )(App);
+
+//connect has two arguments
+//mapDispatchToProps is the second argument 
+//we have put the first argument to null as we dont need 
+//mapStateToProps in Appjs as there is no where in here
+//that we have used the state of the current user
+//hence what we only need here is to send the update of the state
+//to the 'user.actions.js'
+//we dont need the constructor anymore, hence we have remove it!
