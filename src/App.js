@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import './App.css';
 
-import { Route, Switch } from 'react-router-dom';
+import './App.css';
 import HomePage from './pages/homepage/homepage.component';
-import ShopPage from './pages/shop/shop.component';
 import Header from './components/header/header.component';
+import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
+
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
@@ -52,18 +53,32 @@ class App extends Component {
         <Switch>
           <Route exact path='/' component={HomePage}/>
           <Route path='/shop' component={ShopPage} />
-          <Route path='/signin' component={SignInAndSignUpPage} />
+          <Route 
+            exact 
+            path='/signin' 
+            render={() => 
+              this.props.currentUser ? (
+                <Redirect to='/' />
+              ) : (
+                <SignInAndSignUpPage />
+              )
+            } 
+          />
         </Switch>
       </div>
     );
   };
 };
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser//we get access to this.props.currrentUser after putting into connect below
+});
+
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
 });
 
-export default connect(null, mapDispatchToProps )(App);
+export default connect(mapStateToProps, mapDispatchToProps )(App);
 
 //connect has two arguments
 //mapDispatchToProps is the second argument 
@@ -73,3 +88,8 @@ export default connect(null, mapDispatchToProps )(App);
 //hence what we only need here is to send the update of the state
 //to the 'user.actions.js'
 //we dont need the constructor anymore, hence we have remove it!
+//UPDATE: Initially we had null as the first argument in connect()
+//but since we have implemented React Router Redirect to have 
+//the app remove the signIn page after use signs in we have 
+//therefore needed state in the Appjs file there the 
+//mapStateToProp function and implementation.
