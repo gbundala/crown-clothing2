@@ -4,6 +4,7 @@ import { ReactComponent as ShoppingIcon } from '../../assets/shopping-bag.svg';
 import { toggleCartHidden } from '../../redux/cart/cart.actions';
 import { connect } from 'react-redux';
 import { selectCartItemsCount } from '../../redux/cart/cart.selectors';
+import { createStructuredSelector } from 'reselect';
 
 const CartIcon = ({ toggleCartHidden, itemCount }) => {
     return (
@@ -21,8 +22,12 @@ const mapDispatchToProps = dispatch => ({
 //STUDYME: we have destructured the entire of cart from which
 //we then destructure the cartItems. cart represents the entire cart component
 //refer to the cart prop in the redux looger logs in the console
-const mapStateToProps = state => ({
-        itemCount: selectCartItemsCount(state)
+const mapStateToProps = createStructuredSelector({
+        itemCount: selectCartItemsCount
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartIcon);
+
+//we are able to memoize all of our selectors/reducers using reselect
+//and by implementing createStructuredSelector we are able to 
+//easily have more than one props inside the mapStateToProps fn

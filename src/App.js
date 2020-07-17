@@ -5,11 +5,14 @@ import HomePage from './pages/homepage/homepage.component';
 import Header from './components/header/header.component';
 import ShopPage from './pages/shop/shop.component';
 import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up.component';
+import CheckoutPage from './pages/checkout/checkout.component';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
+import { createStructuredSelector } from 'reselect';
+import { selectCurrentUser } from './redux/user/user.selector';
 
 class App extends Component {
 
@@ -53,6 +56,7 @@ class App extends Component {
         <Switch>
           <Route exact path='/' component={HomePage}/>
           <Route path='/shop' component={ShopPage} />
+          <Route exact path='/checkout' component={CheckoutPage} />
           <Route 
             exact 
             path='/signin' 
@@ -70,9 +74,17 @@ class App extends Component {
   };
 };
 
-const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser//we get access to this.props.currrentUser after putting into connect below
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser
 });
+
+//STUDYME: This was the initial implementation before reselect
+//Reselect is a library for memoization so as to cache the output 
+//here in order not to fire mapStateToProps each time the App is re-rendered
+//even if it has not been directly triggered
+// const mapStateToProps = ({ user }) => ({
+//   currentUser: user.currentUser//we get access to this.props.currrentUser after putting into connect below
+// });
 
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user))
