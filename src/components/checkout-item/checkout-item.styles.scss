@@ -23,7 +23,15 @@
     }
   
     .quantity {
-      padding-left: 20px;
+      display: flex;
+
+      .arrow {
+        cursor: pointer; //so the user can tell it's a clickable element
+      }
+
+      .value {
+        margin: 0px 10px; //0px on the top&bottom, 10px on the left&right
+      }
     }
   
     .remove-button {
