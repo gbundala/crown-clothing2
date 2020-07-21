@@ -19,6 +19,7 @@ const CollectionPage = ({ collection }) => {
     );
 };
 
+//TOLEARN: ownProps
 const mapStateToProps = (state, ownProps) => ({
     collection: selectCollection(ownProps.match.params.collectionId)(state)
 });
