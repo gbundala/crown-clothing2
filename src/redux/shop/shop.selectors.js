@@ -12,12 +12,12 @@ export const selectShopCollections = createSelector(
 
 export const selectCollectionsForPreview = createSelector(
     [selectShopCollections],
-    collections => Object.keys(collections).map(key => collections[key])//we get the value of our collection object at that key.
+    collections => collections ? Object.keys(collections).map(key => collections[key]) : [] //we get the value of our collection object at that key.
 );
 
 export const selectCollection = memoize(collectionUrlParam => createSelector(
     [selectCollections],
-    collections => collections[collectionUrlParam]
+    collections => (collections ? collections[collectionUrlParam] : null)
 ));
 //we have memoized the outpout of this selector here due to the collectionUrlParam
 //In this case collectionUrlParam is a dynamic argument meaning it can change, 

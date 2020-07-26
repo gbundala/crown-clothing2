@@ -8,7 +8,7 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 import CheckoutPage from './pages/checkout/checkout.component';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { auth, createUserProfileDocument, addCollectionAndDocuments } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
 import { createStructuredSelector } from 'reselect';
@@ -20,16 +20,11 @@ class App extends Component {
 
   componentDidMount() {
     const { setCurrentUser } = this.props
-    //below is an open subscription which is basically an open
-    //messaging system btn our App and our FirebaseApp.
-    //We don't have to fetch everytime our component mounts 
-    //as long as the user session is still on it connects automatically.
+   
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
         const userRef = await createUserProfileDocument(userAuth);
 
-        //below we use this.props.setCurrentUser inplace of this.setState
-        //as we no longer have the constructor. Note: this.props is destructured above!
         userRef.onSnapshot(snapShot => {
           setCurrentUser({
             id: snapShot.id,
@@ -39,13 +34,38 @@ class App extends Component {
       } 
       
       setCurrentUser(userAuth);
-      // addCollectionAndDocuments(
-      //   'collections', 
-      //   // collectionsArray.map(({ title, items }) => ({ title, items }))
-      // );
       
     });
   }
+
+  // componentDidMount() {
+  //   const { setCurrentUser } = this.props
+  //   //below is an open subscription which is basically an open
+  //   //messaging system btn our App and our FirebaseApp.
+  //   //We don't have to fetch everytime our component mounts 
+  //   //as long as the user session is still on it connects automatically.
+  //   this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
+  //     if (userAuth) {
+  //       const userRef = await createUserProfileDocument(userAuth);
+
+  //       //below we use this.props.setCurrentUser inplace of this.setState
+  //       //as we no longer have the constructor. Note: this.props is destructured above!
+  //       userRef.onSnapshot(snapShot => {
+  //         setCurrentUser({
+  //           id: snapShot.id,
+  //           ...snapShot.data()//STUDYME!
+  //         });
+  //       });
+  //     } 
+      
+  //     setCurrentUser(userAuth);
+  //     // addCollectionAndDocuments(
+  //     //   'collections', 
+  //     //   // collectionsArray.map(({ title, items }) => ({ title, items }))
+  //     // );
+      
+  //   });
+  // }
 
   //as we don't want to have any memory leaks in our app,
   //the subscription will close when the component unmounts
