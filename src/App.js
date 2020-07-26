@@ -8,7 +8,7 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/sign-in-and-sign-up
 import CheckoutPage from './pages/checkout/checkout.component';
 
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils';
+import { auth, createUserProfileDocument, addCollectionAndDocuments } from './firebase/firebase.utils';
 import { connect } from 'react-redux';
 import { setCurrentUser } from './redux/user/user.actions';
 import { createStructuredSelector } from 'reselect';
@@ -39,6 +39,10 @@ class App extends Component {
       } 
       
       setCurrentUser(userAuth);
+      // addCollectionAndDocuments(
+      //   'collections', 
+      //   // collectionsArray.map(({ title, items }) => ({ title, items }))
+      // );
       
     });
   }
@@ -75,7 +79,7 @@ class App extends Component {
 };
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
 });
 
 //STUDYME: This was the initial implementation before reselect
