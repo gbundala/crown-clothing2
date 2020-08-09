@@ -11,13 +11,19 @@ import {
   signInFailure,
   signOutSuccess,
   signOutFailure,
+  signUpFailure,
+  signUpSuccess,
 } from "./user.actions";
 
 //REUSABLE GENERATOR FUNCTION TO PULL USERREF & GET SNAPSHOT
-export function* getSnapShotFromUserAuth(userAuth) {
+export function* getSnapShotFromUserAuth(userAuth, additionalData) {
   //any attempt to an API call has a chance to fail. Hence the tryCatch block to ensure that we catch any errors
   try {
-    const userRef = yield call(createUserProfileDocument, userAuth);
+    const userRef = yield call(
+      createUserProfileDocument,
+      userAuth,
+      additionalData
+    );
     const userSnapshot = yield userRef.get();
     yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() })); //REMEMBER: put(), puts things back into our regular redux flow.
   } catch (error) {
@@ -25,8 +31,7 @@ export function* getSnapShotFromUserAuth(userAuth) {
   }
 }
 
-//ACTION SAGAS
-
+//SIGN OUT METHOD SAGA
 export function* signOut() {
   //to fireout of signOut generator
   try {
@@ -37,6 +42,26 @@ export function* signOut() {
   }
 }
 
+//SIGN UP METHOD SAGAS
+//TODO: IMPLEMENT SIGN UP WITH GOOGLE & FACEBOOK if at all possible
+export function* signUpWithEmail({
+  payload: { email, password, displayName },
+}) {
+  //we have destructured payload off of the userCredentials -- see signUpStart Action creator
+  try {
+    const { user } = yield auth.createUserWithEmailAndPassword(email, password);
+    yield put(signUpSuccess({ user, additionalData: { displayName } }));
+  } catch (error) {
+    yield put(signUpFailure(error));
+  }
+}
+
+//SIGN IN AFTER SIGN UP METHOD SAGA
+export function* signInAfterSignUp({ payload: { user, additionalData } }) {
+  yield getSnapShotFromUserAuth(user, additionalData);
+}
+
+//SIGN IN METHOD SAGAS
 export function* signInWithGoogle() {
   try {
     const { user } = yield auth.signInWithPopup(googleProvider);
@@ -55,6 +80,7 @@ export function* signInWithEmail({ payload: { email, password } }) {
   }
 }
 
+//USER PERSISTENCE METHOD SAGA
 export function* isUserAuthenticated() {
   try {
     const userAuth = yield getCurrentUser();
@@ -82,12 +108,22 @@ export function* onSignOutStart() {
   yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
 }
 
-//MAIN USER SAGA
+export function* onSignUpStart() {
+  yield takeLatest(UserActionTypes.SIGN_UP_START, signUpWithEmail);
+}
+
+export function* onSignUpSuccess() {
+  yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
+}
+
+//ROOT USER SAGA
 export function* userSagas() {
   yield all([
     call(onGoogleSignInStart),
     call(onEmailSignInStart),
     call(isUserAuthenticated),
     call(onSignOutStart),
+    call(onSignUpStart),
+    call(onSignUpSuccess),
   ]);
 }

@@ -1,5 +1,6 @@
 import UserActionTypes from "./user.types";
 
+//SIGN IN SUCCESS && FAILURE
 export const signInSuccess = (user) => ({
   type: UserActionTypes.SIGN_IN_SUCCESS, //this string should never change (hence the use of capital & snake case_)
   payload: user,
@@ -7,6 +8,17 @@ export const signInSuccess = (user) => ({
 
 export const signInFailure = (error) => ({
   type: UserActionTypes.SIGN_IN_FAILURE,
+  payload: error,
+});
+
+//SIGN UP SUCCESS && FAILURE
+export const signUpSuccess = ({ user, additionalData }) => ({
+  type: UserActionTypes.SIGN_UP_SUCCESS,
+  payload: { user, additionalData },
+});
+
+export const signUpFailure = (error) => ({
+  type: UserActionTypes.SIGN_UP_FAILURE,
   payload: error,
 });
 
@@ -19,6 +31,12 @@ export const emailSignInStart = (emailAndPassword) => ({
 //GOOGLE SIGN IN START
 export const googleSignInStart = () => ({
   type: UserActionTypes.GOOGLE_SIGN_IN_START,
+});
+
+//SIGN UP START
+export const signUpStart = (userCredentials) => ({
+  type: UserActionTypes.SIGN_UP_START,
+  payload: userCredentials, //we pass in email, password & displayName as an object called userCredentials as they will be needed later
 });
 
 //SESSION PERSISTENCE
