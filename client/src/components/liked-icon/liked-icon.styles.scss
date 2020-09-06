@@ -1,0 +1,32 @@
+.liked-icon {
+  width: 45px;
+  height: 45px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  .heart-icon {
+    width: 24px;
+    height: 24px;
+
+    &.inverted {
+      fill: white;
+      color: black;
+      border: none;
+
+      &:hover {
+        fill: black;
+        color: white;
+        border: none;
+      }
+    }
+
+    &.toggle-liked-item {
+      fill: rgb(255, 0, 0);
+      color: white;
+      border: none;
+    }
+  }
+}
