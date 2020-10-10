@@ -7,10 +7,12 @@ export function* clearCartOnSignOut() {
   yield put(clearCart());
 }
 
-//INITIALIZATION SAGA (LISTENER)
+//INITIALIZATION SAGA (LISTENER) WHEN USER SIGNS OUT
 export function* onSignOutSuccess() {
   yield takeLatest(UserActionTypes.SIGN_OUT_SUCCESS, clearCartOnSignOut);
 }
+
+//TODO: CREATE AN INITIALIZING SAGA WHEN USER MANUALLY CLICKS BUTTON TO CLEAR OUT THE ENTIRE CART
 
 //CART ROOT SAGA
 export function* cartSagas() {

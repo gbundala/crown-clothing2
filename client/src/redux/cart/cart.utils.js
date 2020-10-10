@@ -1,3 +1,4 @@
+//ADD ITEM TO CART UTIL
 export const addItemToCart = (cartItems, cartItemToAdd) => {
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === cartItemToAdd.id
@@ -14,6 +15,7 @@ export const addItemToCart = (cartItems, cartItemToAdd) => {
   return [...cartItems, { ...cartItemToAdd, quantity: 1 }];
 };
 
+//REMOVE ITEM FROM CART UTIL
 export const removeItemFromCart = (cartItems, cartItemToRemove) => {
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === cartItemToRemove.id
@@ -33,6 +35,6 @@ export const removeItemFromCart = (cartItems, cartItemToRemove) => {
 //...cartItem: Here we have spread the other cart item props
 //i.e. name, price & imageUrl all remain the same on the state/view
 //while the only one that changes is the quantity that is lowered by 1
-//NOTE: the spread operator ... spreads the props within that prop
+//NOTE: the spread operator ... spreads the props within that prop/object
 //in this case within the cartItem prop/object we have the props -- name, price, qty, imageUrl, etc
 //so these are the ones being spread here or actually rendered in the view

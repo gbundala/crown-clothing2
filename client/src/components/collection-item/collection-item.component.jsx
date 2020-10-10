@@ -4,13 +4,11 @@ import CustomButton from "../custom-button/custom-button.component";
 import { addItem } from "../../redux/cart/cart.actions";
 import { connect } from "react-redux";
 import LikedIcon from "../liked-icon/liked-icon.component";
-import {
-  addLikedItem,
-  toggleLikedItem,
-  toggleLikedHidden,
-} from "../../redux/liked/liked.actions";
+import { addLikedItem, toggleLikedItem } from "../../redux/liked/liked.actions";
 import { createStructuredSelector } from "reselect";
 import { selectLikedItemToggle } from "../../redux/liked/liked.selectors";
+import { selectCurrentUser } from "../../redux/user/user.selector";
+import { Redirect, withRouter } from "react-router-dom";
 
 const CollectionItem = ({
   item,
@@ -18,6 +16,8 @@ const CollectionItem = ({
   addLikedItem,
   addLikedItemExists,
   toggleLikedItem,
+  currentUser,
+  history,
 }) => {
   const { name, price, imageUrl } = item;
   return (
@@ -52,6 +52,7 @@ const CollectionItem = ({
 
 const mapStateToProps = createStructuredSelector({
   toggleLikedItem: selectLikedItemToggle,
+  currentUser: selectCurrentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -60,4 +61,6 @@ const mapDispatchToProps = (dispatch) => ({
   toggleLikedItem: () => dispatch(toggleLikedItem()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionItem);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(CollectionItem)
+);

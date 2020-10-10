@@ -41,6 +41,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
+//ADDING OUR COLLECTION TO FIRESTORE
 export const addCollectionAndDocuments = async (
   collectionKey,
   objectsToAdd
@@ -50,7 +51,7 @@ export const addCollectionAndDocuments = async (
 
   const batch = firestore.batch();
 
-  //forEach does not create a new array. we want to call the function on each obj
+  //forEach is similar to map but does not create a new array. we want to call the function on each obj
   objectsToAdd.forEach((obj) => {
     const newDocRef = collectionRef.doc();
     batch.set(newDocRef, obj);
@@ -59,6 +60,7 @@ export const addCollectionAndDocuments = async (
   return await batch.commit();
 };
 
+//PULLING DATA FROM FIRESTORE 'COLLECTIONS' COLLECTION INTO REDUX THEN INTO RESPECTIVE REACT COMPONENTS/CONTAINERS THAT NEED IT
 export const convertCollectionsSnapshotToMap = (collections) => {
   const transformedCollection = collections.docs.map((doc) => {
     const { title, items } = doc.data();

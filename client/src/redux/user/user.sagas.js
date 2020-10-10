@@ -15,7 +15,7 @@ import {
   signUpSuccess,
 } from "./user.actions";
 
-//REUSABLE GENERATOR FUNCTION TO PULL USERREF & GET SNAPSHOT
+//REUSABLE GENERATOR FUNCTION TO PULL USERREF & GET SNAPSHOT UPON SIGN IN SUCCESS
 export function* getSnapShotFromUserAuth(userAuth, additionalData) {
   //any attempt to an API call has a chance to fail. Hence the tryCatch block to ensure that we catch any errors
   try {
@@ -25,7 +25,7 @@ export function* getSnapShotFromUserAuth(userAuth, additionalData) {
       additionalData
     );
     const userSnapshot = yield userRef.get();
-    yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() })); //REMEMBER: put(), puts things back into our regular redux flow.
+    yield put(signInSuccess({ id: userSnapshot.id, ...userSnapshot.data() })); //REMEMBER: put(), puts things back into our regular redux flow. Put is equivalent to dispatch
   } catch (error) {
     yield put(signInFailure(error));
   }
@@ -116,7 +116,7 @@ export function* onSignUpSuccess() {
   yield takeLatest(UserActionTypes.SIGN_UP_SUCCESS, signInAfterSignUp);
 }
 
-//ROOT USER SAGA
+//ROOT/BASE USER SAGA
 export function* userSagas() {
   yield all([
     call(onGoogleSignInStart),

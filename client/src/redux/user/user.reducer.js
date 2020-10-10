@@ -1,4 +1,4 @@
-//LEARN: A reducer is simply a function that received 2 things
+//TODO: LEARN: A reducer is simply a function that received 2 things
 //1. it receives the current/initial state
 //2. it receives the action
 //Actions just simply have type & payload.

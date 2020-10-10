@@ -22,37 +22,6 @@ class App extends Component {
     checkUserSession();
   }
 
-  // componentDidMount() {
-  //   const { setCurrentUser } = this.props
-  //   //below is an open subscription which is basically an open
-  //   //messaging system btn our App and our FirebaseApp.
-  //   //We don't have to fetch everytime our component mounts
-  //   //as long as the user session is still on it connects automatically.
-  //   this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
-  //     if (userAuth) {
-  //       const userRef = await createUserProfileDocument(userAuth);
-
-  //       //below we use this.props.setCurrentUser inplace of this.setState
-  //       //as we no longer have the constructor. Note: this.props is destructured above!
-  //       userRef.onSnapshot(snapShot => {
-  //         setCurrentUser({
-  //           id: snapShot.id,
-  //           ...snapShot.data()//STUDYME!
-  //         });
-  //       });
-  //     }
-
-  //     setCurrentUser(userAuth);
-  //     // addCollectionAndDocuments(
-  //     //   'collections',
-  //     //   // collectionsArray.map(({ title, items }) => ({ title, items }))
-  //     // );
-
-  //   });
-  // }
-
-  //as we don't want to have any memory leaks in our app,
-  //the subscription will close when the component unmounts
   componentWillUnmount() {
     this.unsubscribeFromAuth();
   }
