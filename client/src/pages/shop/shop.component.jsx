@@ -8,7 +8,6 @@ import CollectionPageContainer from "../collection/collection.container";
 class ShopPage extends Component {
   componentDidMount() {
     const { fetchCollectionsStart } = this.props;
-
     fetchCollectionsStart();
   }
 

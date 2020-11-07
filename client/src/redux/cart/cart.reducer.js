@@ -4,6 +4,7 @@ import { addItemToCart, removeItemFromCart } from "./cart.utils";
 const INITIAL_STATE = {
   hidden: true,
   cartItems: [],
+  error: null,
 };
 
 const cartReducer = (state = INITIAL_STATE, action) => {
@@ -17,6 +18,18 @@ const cartReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state, //we spread everything in our state.
         cartItems: addItemToCart(state.cartItems, action.payload),
+      };
+    //this case is only fired when the user logs into another computer i.e. when the userAuth is rehydrated
+    case CartActionTypes.CART_ITEMS_STORE_SUCCESS:
+      return {
+        ...state,
+        cartItems: action.payload,
+        error: null,
+      };
+    case CartActionTypes.CART_ITEMS_STORE_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
       };
     case CartActionTypes.CLEAR_ITEM_FROM_CART:
       return {

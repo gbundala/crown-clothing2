@@ -6,7 +6,10 @@ import CartItem from "../cart-item/cart-item.component";
 import { selectCartItems } from "../../redux/cart/cart.selectors";
 import { createStructuredSelector } from "reselect";
 import { withRouter } from "react-router-dom";
-import { toggleCartHidden } from "../../redux/cart/cart.actions";
+import {
+  cartItemsStoreStart,
+  toggleCartHidden,
+} from "../../redux/cart/cart.actions";
 
 const CartDropdown = ({ cartItems, history, dispatch }) => {
   return (
@@ -24,6 +27,7 @@ const CartDropdown = ({ cartItems, history, dispatch }) => {
         onClick={() => {
           history.push("/checkout");
           dispatch(toggleCartHidden());
+          dispatch(cartItemsStoreStart());
         }}
       >
         GO TO CHECKOUT

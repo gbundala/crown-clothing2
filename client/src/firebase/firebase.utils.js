@@ -60,6 +60,35 @@ export const addCollectionAndDocuments = async (
   return await batch.commit();
 };
 
+//ADDING USER CARTITEMS TO FIRESTORE
+
+export const addCartItemsCollectionAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const cartItemsRef = firestore.collection(collectionKey);
+  console.log(cartItemsRef);
+  const cartItemsSnapshot = cartItemsRef.limit(1).get();
+  console.log(cartItemsSnapshot);
+
+  if (cartItemsSnapshot.size === 0) {
+    console.log("this empty block is called");
+    const batch = firestore.batch();
+
+    objectsToAdd.forEach((obj) => {
+      const newDocRef = cartItemsRef.doc();
+      const newDocSnapshot = newDocRef.get();
+      console.log(newDocSnapshot);
+
+      batch.set(newDocRef, obj);
+    });
+
+    return await batch.commit();
+  }
+
+  //otherwise if it is not empty we set transactionally the docs  i.e. one after another not in batch
+};
+
 //PULLING DATA FROM FIRESTORE 'COLLECTIONS' COLLECTION INTO REDUX THEN INTO RESPECTIVE REACT COMPONENTS/CONTAINERS THAT NEED IT
 export const convertCollectionsSnapshotToMap = (collections) => {
   const transformedCollection = collections.docs.map((doc) => {
