@@ -23,8 +23,8 @@ export function* storeCartItemsInFirebase() {
     const cartItems = yield select(selectCartItems);
     // const userAuth = yield getCurrentUser();
     // if (!userAuth) return; //if user never signed in, end session
-    console.log("this saga has been called");
     yield call(addCartItemsCollectionAndDocuments, "cartItems", cartItems);
+    console.log("this saga has been called");
 
     // yield put(cartItemsStoreSuccess());
 

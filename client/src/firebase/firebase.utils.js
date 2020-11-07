@@ -41,6 +41,23 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
   return userRef;
 };
 
+//ADDING SHOP COLLECTION DATA AGAIN AFTER MISTAKENLY DELETING😜
+export const addShopCollectionsAndDocuments = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const shopCollectionRef = firestore.collection(collectionKey);
+
+  const batch = firestore.batch();
+
+  objectsToAdd.forEach((obj) => {
+    const newShopDocRef = shopCollectionRef.doc();
+    batch.set(newShopDocRef, obj);
+  });
+
+  await batch.commit();
+};
+
 //ADDING OUR COLLECTION TO FIRESTORE
 export const addCollectionAndDocuments = async (
   collectionKey,
@@ -60,9 +77,95 @@ export const addCollectionAndDocuments = async (
   return await batch.commit();
 };
 
-//ADDING USER CARTITEMS TO FIRESTORE
-
+//ADDING USER CARTITEMS TO FIRESTORE -- 2ND DRAFT
 export const addCartItemsCollectionAndDocuments = async (
+  cartCollectionKey,
+  cartDocsToAdd
+) => {
+  const cartItemsCollectionRef = firestore.collection(cartCollectionKey);
+  const cartItemsCollectionSnapshot = cartItemsCollectionRef.get();
+
+  //this is gona be interesting!
+  const existingCartItemDoc = cartDocsToAdd
+    .forEach(async (obj) => await cartItemsCollectionSnapshot.docs)
+    .find((docObj, obj) => docObj.data().id === obj.id);
+  console.log("this is the chained existingCartItemDocs", existingCartItemDoc);
+
+  //Run this code only if the cartItems collection is empty
+  if ((await cartItemsCollectionSnapshot).empty) {
+    const cartBatch = firestore.batch();
+
+    cartDocsToAdd.forEach((obj) => {
+      const newCartDocRef = cartItemsCollectionRef.doc();
+      const cartDocSnapshot = newCartDocRef.get();
+
+      cartBatch.set(newCartDocRef, obj);
+    });
+
+    return await cartBatch.commit();
+  }
+
+  //Run this code to add a document that does not exist
+  // if (obj.exists) return;
+
+  // const newCartDocRef = cartItemsCollectionRef.doc();
+  // newCartDocRef.set(obj);
+  // console.log("new cart item doc object is successfully set");
+
+  //Run this code if cartItems collection already has documents
+  cartDocsToAdd.forEach(async (obj) => {
+    const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot)
+      .docs;
+    const existingCartDoc = cartItemsDocSnapshotObjects.find(
+      (docObj) => docObj.data().id === obj.id
+    );
+    const existingCartDocRef = cartItemsCollectionRef.doc();
+
+    if (existingCartDoc) {
+      return cartItemsDocSnapshotObjects.forEach(async (docObj) => {
+        console.log(docObj);
+        if (docObj.data().id === obj.id) {
+          try {
+            await existingCartDocRef.update({
+              ...docObj.data(),
+              quantity: obj.quantity,
+            });
+          } catch (error) {
+            console.log("error in setting qty:", error.message);
+          }
+        }
+
+        return docObj;
+      });
+    }
+
+    return cartItemsCollectionRef.add(obj);
+  });
+
+  //THIS IS WHERE I LEFT OF -- PRECIOUS CODE
+  // const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot).docs;
+  // console.log(cartItemsDocSnapshotObjects);
+
+  // cartItemsDocSnapshotObjects.forEach((obj) => {
+  //   console.log("this code just before exists is run");
+  //   if (obj.exists) return;
+
+  //   cartItemsCollectionRef.add(obj);
+  //   console.log("new cart item doc object is successfully set");
+  // });
+
+  //IRRELEVANT CODE -- JUST RECHECK THOUGH
+  // cartDocsToAdd.forEach((obj) => {
+  //   const newCartDocRef = cartItemsCollectionRef.doc();
+  //     const cartDocSnapshot = newCartDocRef.get();
+
+  //   if (cartDocSnapshot.exists) return
+
+  // })
+};
+
+//ADDING USER CARTITEMS TO FIRESTORE -- 1ST DRAFT
+export const addCartItemsCollectionAndDocuments1 = async (
   collectionKey,
   objectsToAdd
 ) => {
@@ -86,7 +189,7 @@ export const addCartItemsCollectionAndDocuments = async (
     return await batch.commit();
   }
 
-  //otherwise if it is not empty we set transactionally the docs  i.e. one after another not in batch
+  //otherwise if it is not empty we set transactionally the docs  i.e. one after another not in batch -- put in the code here for this
 };
 
 //PULLING DATA FROM FIRESTORE 'COLLECTIONS' COLLECTION INTO REDUX THEN INTO RESPECTIVE REACT COMPONENTS/CONTAINERS THAT NEED IT
