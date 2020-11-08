@@ -86,9 +86,20 @@ export const addCartItemsCollectionAndDocuments = async (
   const cartItemsCollectionSnapshot = cartItemsCollectionRef.get();
 
   //this is gona be interesting!
-  const existingCartItemDoc = cartDocsToAdd
-    .forEach(async (obj) => await cartItemsCollectionSnapshot.docs)
-    .find((docObj, obj) => docObj.data().id === obj.id);
+  // const existingCartItemDoc = cartDocsToAdd
+  //   .forEach(async (obj) => await cartItemsCollectionSnapshot.docs)
+  //   .find((docObj, obj) => docObj.data().id === obj.id);
+  // console.log("this is the chained existingCartItemDocs", existingCartItemDoc);
+
+  //this is so much more interesting!
+  const existingCartItemDoc = cartDocsToAdd.map(async (obj) => {
+    const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot)
+      .docs;
+    return cartItemsDocSnapshotObjects.find(
+      (docObj) => docObj.data().id === obj.id
+    );
+  });
+
   console.log("this is the chained existingCartItemDocs", existingCartItemDoc);
 
   //Run this code only if the cartItems collection is empty
