@@ -18,6 +18,7 @@ export function* clearCartOnSignOut() {
 }
 
 //CALLING THE FIREBASE METHOD TO STORE CART ITEMS IN FIREBASE
+//FIXME: Remove the console log here
 export function* storeCartItemsInFirebase() {
   try {
     const cartItems = yield select(selectCartItems);
