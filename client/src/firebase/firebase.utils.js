@@ -84,23 +84,22 @@ export const addCartItemsCollectionAndDocuments = async (
 ) => {
   const cartItemsCollectionRef = firestore.collection(cartCollectionKey);
   const cartItemsCollectionSnapshot = cartItemsCollectionRef.get();
+  const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot).docs;
 
-  //this is gona be interesting!
-  // const existingCartItemDoc = cartDocsToAdd
-  //   .forEach(async (obj) => await cartItemsCollectionSnapshot.docs)
-  //   .find((docObj, obj) => docObj.data().id === obj.id);
-  // console.log("this is the chained existingCartItemDocs", existingCartItemDoc);
+  //code checks whether all the items exists firebase
+  const existingCartItemDocs = cartDocsToAdd.every((obj) =>
+    cartItemsDocSnapshotObjects.find((docObj) => docObj.data().id === obj.id)
+  );
 
-  //this is so much more interesting!
-  const existingCartItemDoc = cartDocsToAdd.map(async (obj) => {
-    const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot)
-      .docs;
-    return cartItemsDocSnapshotObjects.find(
-      (docObj) => docObj.data().id === obj.id
-    );
-  });
+  //Capture & store the new cartItem to be added as a doc in firestore
+  const newCartItemDoc = cartItemsDocSnapshotObjects.map(async (docObj) =>
+    cartDocsToAdd.find((obj) => docObj.data().id === obj.id)
+  );
 
-  console.log("this is the chained existingCartItemDocs", existingCartItemDoc);
+  const newCartItemDoc1 = cartDocsToAdd.map(async (obj) =>
+    cartItemsDocSnapshotObjects.filter((docObj) => docObj.data().id !== obj.id)
+  );
+  console.log("new cartItem doc stored!", newCartItemDoc1);
 
   //Run this code only if the cartItems collection is empty
   if ((await cartItemsCollectionSnapshot).empty) {
@@ -116,28 +115,17 @@ export const addCartItemsCollectionAndDocuments = async (
     return await cartBatch.commit();
   }
 
-  //Run this code to add a document that does not exist
-  // if (obj.exists) return;
+  //Run this code if we need to update the existing cartItemDoc
+  if (existingCartItemDocs) {
+    return cartItemsDocSnapshotObjects.forEach(async (docObj) => {
+      console.log(docObj);
+      const existingCartDocRef = firestore.doc(`cartItems/${docObj.id}`);
+      console.log(existingCartDocRef);
 
-  // const newCartDocRef = cartItemsCollectionRef.doc();
-  // newCartDocRef.set(obj);
-  // console.log("new cart item doc object is successfully set");
-
-  //Run this code if cartItems collection already has documents
-  cartDocsToAdd.forEach(async (obj) => {
-    const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot)
-      .docs;
-    const existingCartDoc = cartItemsDocSnapshotObjects.find(
-      (docObj) => docObj.data().id === obj.id
-    );
-    const existingCartDocRef = cartItemsCollectionRef.doc();
-
-    if (existingCartDoc) {
-      return cartItemsDocSnapshotObjects.forEach(async (docObj) => {
-        console.log(docObj);
+      cartDocsToAdd.map(async (obj) => {
         if (docObj.data().id === obj.id) {
           try {
-            await existingCartDocRef.update({
+            return await existingCartDocRef.update({
               ...docObj.data(),
               quantity: obj.quantity,
             });
@@ -145,34 +133,20 @@ export const addCartItemsCollectionAndDocuments = async (
             console.log("error in setting qty:", error.message);
           }
         }
-
-        return docObj;
       });
-    }
+    });
+  }
 
-    return cartItemsCollectionRef.add(obj);
-  });
+  //Run this code if the is a new item to be added in firebase
+  //TODO: Put a try catch block for adding the obj in firebase & replace the console log
+  console.log("does it ever reach here?");
+  return cartDocsToAdd.map(async (obj) =>
+    cartItemsDocSnapshotObjects.find((docObj) => docObj.data().id === obj.id)
+      ? console.log("it exists in firebase")
+      : await cartItemsCollectionRef.add(obj)
+  );
 
-  //THIS IS WHERE I LEFT OF -- PRECIOUS CODE
-  // const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot).docs;
-  // console.log(cartItemsDocSnapshotObjects);
-
-  // cartItemsDocSnapshotObjects.forEach((obj) => {
-  //   console.log("this code just before exists is run");
-  //   if (obj.exists) return;
-
-  //   cartItemsCollectionRef.add(obj);
-  //   console.log("new cart item doc object is successfully set");
-  // });
-
-  //IRRELEVANT CODE -- JUST RECHECK THOUGH
-  // cartDocsToAdd.forEach((obj) => {
-  //   const newCartDocRef = cartItemsCollectionRef.doc();
-  //     const cartDocSnapshot = newCartDocRef.get();
-
-  //   if (cartDocSnapshot.exists) return
-
-  // })
+  //TODO: Add a conditional to remove an item from firebase that had been removed from the client store
 };
 
 //ADDING USER CARTITEMS TO FIRESTORE -- 1ST DRAFT
