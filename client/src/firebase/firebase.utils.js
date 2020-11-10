@@ -80,9 +80,14 @@ export const addCollectionAndDocuments = async (
 //ADDING USER CARTITEMS TO FIRESTORE
 export const addCartItemsCollectionAndDocuments = async (
   cartCollectionKey,
-  cartDocsToAdd
+  cartDocsToAdd,
+  user
 ) => {
-  const cartItemsCollectionRef = firestore.collection(cartCollectionKey);
+  console.log("who is logged in?", user.id);
+  const cartItemsCollectionRef = firestore.collection(
+    `users/${user.id}/${cartCollectionKey}`
+  );
+  console.log(cartItemsCollectionRef);
   const cartItemsCollectionSnapshot = cartItemsCollectionRef.get();
   const cartItemsDocSnapshotObjects = (await cartItemsCollectionSnapshot).docs;
 
@@ -103,9 +108,12 @@ export const addCartItemsCollectionAndDocuments = async (
   }
 
   //Run this code if we need to update the existing cartItemDoc
+  //FIXME: This code always run even if there is no new qty to update, rectify
   if (existingCartItemDocs) {
     return cartItemsDocSnapshotObjects.forEach(async (docObj) => {
-      const existingCartDocRef = firestore.doc(`cartItems/${docObj.id}`);
+      const existingCartDocRef = firestore.doc(
+        `users/${user.id}/${cartCollectionKey}/${docObj.id}`
+      );
 
       cartDocsToAdd.map(async (obj) => {
         if (docObj.data().id === obj.id) {
@@ -156,6 +164,19 @@ export const convertCollectionsSnapshotToMap = (collections) => {
     accumulator[collection.title.toLowerCase()] = collection;
     return accumulator;
   }, {});
+};
+
+//TODO: PULLING DATA FROM CARTITEMS COLLECTION
+export const convertCartCollectionSnapshotToMap = (collection) => {
+  const transformedCollection = collection.docs.map((doc) => {
+    return {
+      ...doc.data(),
+    };
+  });
+
+  return transformedCollection.reduce((accumulator, documents) => {
+    return [...accumulator, documents];
+  }, []);
 };
 
 //USER SESSION PERSISTENCE UTIL

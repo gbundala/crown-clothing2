@@ -36,3 +36,13 @@ export const cartItemsStoreFailure = (error) => ({
   type: CartActionTypes.CART_ITEMS_STORE_FAILURE,
   payload: error,
 });
+
+export const fetchCartCollectionsSuccess = (collectionMap) => ({
+  type: CartActionTypes.FETCH_CART_COLLECTION_SUCCESS,
+  payload: collectionMap,
+});
+
+export const fetchCartCollectionsFailure = (error) => ({
+  type: CartActionTypes.FETCH_CART_COLLECTION_FAILURE,
+  payload: error,
+});

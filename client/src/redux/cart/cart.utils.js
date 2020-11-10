@@ -1,9 +1,10 @@
-//ADD ITEM TO CART UTIL
+//ADD ITEM TO CART
 export const addItemToCart = (cartItems, cartItemToAdd) => {
   const existingCartItem = cartItems.find(
     (cartItem) => cartItem.id === cartItemToAdd.id
   );
 
+  //FIXME: Put a condition to return from this function is the user is not signed in or to redirect to signIn page
   if (existingCartItem) {
     return cartItems.map((cartItem) =>
       cartItem.id === cartItemToAdd.id

@@ -20,11 +20,16 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         cartItems: addItemToCart(state.cartItems, action.payload),
       };
     //this case is only fired when the user logs into another computer i.e. when the userAuth is rehydrated
-    case CartActionTypes.CART_ITEMS_STORE_SUCCESS:
+    case CartActionTypes.FETCH_CART_COLLECTION_SUCCESS:
       return {
         ...state,
         cartItems: action.payload,
         error: null,
+      };
+    case CartActionTypes.FETCH_CART_COLLECTION_FAILURE:
+      return {
+        ...state,
+        error: action.payload,
       };
     case CartActionTypes.CART_ITEMS_STORE_FAILURE:
       return {
