@@ -1,0 +1,16 @@
+.seller-form {
+  display: flex;
+  flex-direction: column;
+  width: 380px;
+
+  .title {
+    margin: 10px 0;
+  }
+}
+
+.seller-page-setup {
+  width: 850px;
+  display: flex;
+  justify-content: space-between;
+  margin: 30px auto;
+}

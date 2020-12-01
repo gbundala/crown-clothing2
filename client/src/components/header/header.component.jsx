@@ -42,6 +42,10 @@ const Header = ({
             SIGN IN
           </Link>
         )}
+        {/* TODO: Create the functionality that will assign an identifier token to the user -- as prop called seller. the page will be used to sign up sellers */}
+        <Link className="option" to="/seller">
+          SELLER
+        </Link>
         <CartIcon />
         <LikedIcon onClick={toggleLikedHidden} />
       </div>

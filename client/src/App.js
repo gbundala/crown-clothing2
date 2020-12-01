@@ -13,6 +13,7 @@ import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "./redux/user/user.selector";
 import { checkUserSession } from "./redux/user/user.actions";
 import LikedItemsPage from "./pages/liked/liked.component";
+import Seller from "./pages/seller/seller.component";
 
 class App extends Component {
   unsubscribeFromAuth = null;
@@ -43,6 +44,7 @@ class App extends Component {
               currentUser ? <Redirect to="/" /> : <SignInAndSignUpPage />
             }
           />
+          <Route exact path="/seller" component={Seller} />
         </Switch>
       </div>
     );
