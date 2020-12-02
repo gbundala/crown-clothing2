@@ -70,14 +70,15 @@ class SignIn extends Component {
               </CustomButton>
             </div>
             <div className="upper-buttons">
-              <CustomButton type="submit">Twitter sign In</CustomButton>
+              {/* TODO: Implement the respective saga flow for Twitter and Facebook signIn */}
+              {/* <CustomButton type="submit">Twitter sign In</CustomButton>
               <CustomButton
                 type="button"
                 //onClick={signInWithFacebook}
                 isGoogleSignIn
               >
                 Sign in with Facebook
-              </CustomButton>
+              </CustomButton> */}
             </div>
           </div>
         </form>

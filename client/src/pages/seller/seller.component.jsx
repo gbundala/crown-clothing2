@@ -39,7 +39,9 @@ class Seller extends Component {
           <h2 className="title">
             I want to upload my products on Crown Clothing
           </h2>
-          <span>Fill the form below below to upload</span>
+          <span>This feature will be live soon!</span>
+          {/* TODO: Connect this feature to Firestore and set it live */}
+          {/* <span>Fill the form below below to upload</span>
           <form className="sign-up-form" onSubmit={this.handleSubmit}>
             <FormInput
               type="text"
@@ -75,7 +77,7 @@ class Seller extends Component {
             />
             <CustomButton type="submit">PREVIEW</CustomButton>
             <CustomButton type="submit">UPLOAD</CustomButton>
-          </form>
+          </form> */}
         </div>
         {/* <div>create a separate component for the collection item to be used here</div> */}
       </div>
