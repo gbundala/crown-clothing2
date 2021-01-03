@@ -77,6 +77,14 @@ export const addCollectionAndDocuments = async (
   return await batch.commit();
 };
 
+//SELLER ADDING INDIVIDUAL DOCUMENTS OF ITEMS TO SHOP COLLECTION IN FIRESTORE
+export const addIndividualShopDocumentsInExistingCollections = async (
+  collectionKey,
+  objectsToAdd
+) => {
+  const collectionRef = firestore.collection(collectionKey);
+};
+
 //ADDING USER CARTITEMS TO FIRESTORE
 export const addCartItemsCollectionAndDocuments = async (
   cartCollectionKey,

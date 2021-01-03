@@ -8,6 +8,7 @@ const INITAL_STATE = {
 
 const shopReducer = (state = INITAL_STATE, action) => {
   switch (action.type) {
+    // Fetch Collections Reducers
     case ShopActionTypes.FETCH_COLLECTIONS_START:
       return {
         ...state,
@@ -23,6 +24,12 @@ const shopReducer = (state = INITAL_STATE, action) => {
       return {
         ...state,
         isFetching: false,
+        errorMessage: action.payload,
+      };
+    // Store Collections Reducers
+    case ShopActionTypes.COLLECTION_ITEMS_STORE_FAILURE:
+      return {
+        ...state,
         errorMessage: action.payload,
       };
     default:
