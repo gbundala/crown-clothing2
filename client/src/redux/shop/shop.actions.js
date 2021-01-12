@@ -20,9 +20,10 @@ export const fetchCollectionsFailure = (errorMessage) => ({
   payload: errorMessage,
 });
 
-//ACTION METHODS TO STORE COLLECTION ITEMS TO FIREBASE
-export const collectionItemsStoreStart = () => ({
+//ACTION METHODS TO STORE INDIVIDUAL COLLECTION ITEMS TO FIREBASE
+export const collectionItemsStoreStart = (values) => ({
   type: ShopActionTypes.COLLECTION_ITEMS_STORE_START,
+  payload: values,
 });
 
 export const collectionItemsStoreSuccess = (collectionItems) => ({

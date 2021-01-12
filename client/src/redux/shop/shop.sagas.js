@@ -2,6 +2,7 @@
 import { takeLatest, call, put, all } from "redux-saga/effects";
 import ShopActionTypes from "./shop.types";
 import {
+  addIndividualShopDocumentItems,
   convertCollectionsSnapshotToMap,
   firestore,
 } from "../../firebase/firebase.utils";
@@ -30,7 +31,24 @@ export function* fetchCollectionsAsync() {
 }
 
 //STORING NEW COLLECTION ITEMS TO FIREBASE
-export function* storeCollectionItemsInFirebaseAsync() {}
+export function* storeCollectionItemsInFirebaseAsync({
+  payload: { name, price, imageUrl, collection },
+}) {
+  console.log("Saga is fired");
+  try {
+    yield call(
+      addIndividualShopDocumentItems,
+      "collections",
+      collection,
+      name,
+      price,
+      imageUrl
+    );
+    console.log("Successsfully stored data in firestore");
+  } catch (error) {
+    console.error("Error in storing to Firebase: ", error);
+  }
+}
 
 //INITIALIZATION SAGA TO FETCH DATA FROM FIREBASE
 export function* fetchCollectionsStart() {
@@ -50,5 +68,5 @@ export function* onCollectionItemsStoreStart() {
 
 //ROOT SHOP SAGA
 export function* shopSagas() {
-  yield all([call(fetchCollectionsStart), call(onCartItemsStoreStart)]);
+  yield all([call(fetchCollectionsStart), call(onCollectionItemsStoreStart)]);
 }

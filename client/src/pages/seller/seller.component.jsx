@@ -1,36 +1,99 @@
+// React Imports
 import React, { useState } from "react";
-import "./seller.styles.scss";
+import { useDispatch } from "react-redux";
 
+// Imports from other files
+import "./seller.styles.scss";
 import CustomButton from "../../components/custom-button/custom-button.component";
 import FormInput from "../../components/form-input/form-input.component";
 import CollectionItem from "../../components/collection-item/collection-item.component";
-import { selectCartItems } from "../../redux/cart/cart.selectors";
+import {
+  collectionItemsStoreStart,
+  fetchCollectionsStart,
+} from "../../redux/shop/shop.actions";
+
+//Formik Import
+import { useField, Form, Formik } from "formik";
+import * as Yup from "yup";
 
 const Seller = () => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [collection, setCollection] = useState("");
-  const [newItems, setNewItems] = useState([]);
+  //Input Fields
+  const MyInputField = (props) => {
+    const [field, meta] = useField(props);
 
-  //LEARN: revisit how to implement this method.
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    console.log("seller form submitted");
-    setNewItems([name]);
+    return (
+      <>
+        <FormInput {...field} {...props} />
+        {meta.touched && meta.error ? <div>{meta.error}</div> : null}
+      </>
+    );
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
+  const MySelect = ({ label, ...props }) => {
+    const [field, meta] = useField(props);
 
-    setName(value);
-    setPrice(value);
-    setImageUrl(value);
-
-    // this.setState({ [name]: value });
+    return (
+      <div className="group">
+        <select {...field} {...props} className="form-input" />
+        {label ? (
+          <label
+            className={`${props.length ? "shrink" : "shrink"} form-input-label`}
+          >
+            {label}
+          </label>
+        ) : null}
+        {meta.touched && meta.error ? <div>{meta.error} </div> : null}
+      </div>
+    );
   };
 
+  //useDispatch react-redux binding
+  const dispatch = useDispatch();
+
+  //Formik Props
+  const yupSchema = Yup.object({
+    name: Yup.string()
+      .max(30, "Must be at most 30 characters")
+      .required("Required"),
+    price: Yup.number()
+      .required("Required")
+      .integer("Must be an integer")
+      .positive("Must be a positive integer"),
+    imageUrl: Yup.string().url("Must be URL").required("Required"),
+    collection: Yup.string()
+      .oneOf(
+        [
+          "Czx1Zdbee5NA1rcKExMI",
+          "ZsECPU5cs5rMJihxzgzh",
+          "ELkNhPZaZMEFvMqnI8XP",
+          "CUbKnZZ0qf0055Fz4K9h",
+          "CeJTRVox79x7klhmsmBP",
+        ],
+        "Invalid Collection"
+      )
+      .required("Required"),
+  });
+
+  const initialValues = {
+    name: "",
+    price: "",
+    imageUrl: "",
+    collection: "",
+  };
+
+  const formikHandleSubmit = async (values, { setSubmitting }) => {
+    console.log("Storing action to be fired");
+    dispatch(collectionItemsStoreStart(values));
+    console.log("Storing start action fired: ", values);
+    setSubmitting(false);
+  };
+
+  const handleFileUpload = (event) => {
+    console.log(even.target);
+    // event.target.file[0]
+  };
+
+  //Rendering
   return (
     <div className="seller-page-setup">
       <div className="seller-form">
@@ -39,57 +102,65 @@ const Seller = () => {
         </h2>
         {/* TODO: Connect this feature to Firestore and set it live */}
         <span>Fill the form below below to upload you items</span>
-        <form className="sign-up-form" onSubmit={handleSubmit}>
+
+        <Formik
+          initialValues={initialValues}
+          validationSchema={yupSchema}
+          onSubmit={formikHandleSubmit}
+        >
+          {/* TODO: Confirm if the disable prop is actually working in the buttons */}
+          {({ isSubmitting }) => (
+            <Form className="sign-up-form">
+              <MyInputField name="name" type="text" label="Item Name" />
+
+              <MyInputField name="price" type="number" label="price" />
+
+              <MyInputField name="imageUrl" type="url" label="Image Url" />
+
+              <MySelect name="collection" label="Collection">
+                <option value="">Select a collection</option>
+                <option value="Czx1Zdbee5NA1rcKExMI">Hats</option>
+                <option value="ZsECPU5cs5rMJihxzgzh">Jackets</option>
+                <option value="ELkNhPZaZMEFvMqnI8XP">Sneakers</option>
+                <option value="CUbKnZZ0qf0055Fz4K9h">Womens</option>
+                <option value="CeJTRVox79x7klhmsmBP">Mens</option>
+              </MySelect>
+
+              <div className="seller-form-buttons">
+                <CustomButton type="submit" disabled={isSubmitting}>
+                  PREVIEW
+                </CustomButton>
+                <CustomButton type="submit" disabled={isSubmitting}>
+                  UPLOAD
+                </CustomButton>
+              </div>
+            </Form>
+          )}
+        </Formik>
+        <br></br>
+        <form className="uploader-form">
+          <progress
+            id="uploadProgress"
+            name="uploadProgress"
+            value="0"
+            max="100"
+          >
+            0%
+          </progress>
           <FormInput
-            type="text"
-            name="name" //this is the prop in the object.
-            value={name}
-            handleChange={handleChange}
-            label="name"
-            required
+            id="fileButton"
+            name="fileButton"
+            type="file"
+            onChange={handleFileUpload}
           />
-          <FormInput
-            type="number"
-            name="price"
-            value={price}
-            handleChange={handleChange}
-            label="price"
-            required
-          />
-          <FormInput
-            type="url"
-            name="imageUrl"
-            value={imageUrl}
-            handleChange={handleChange}
-            label="Image Url"
-            // required
-          />
-          <FormInput
-            type="select"
-            name="collection"
-            value={collection}
-            handleChange={handleChange}
-            label="Collection"
-            // required
-          />
-          <select id="collection" name="collection">
-            <option value="Hats">Hats</option>
-            <option value="Jackets">Jackets</option>
-            <option value="Sneakers">Sneakers</option>
-            <option value="Womens">Womens</option>
-            <option value="Mens">Mens</option>
-          </select>
-          <div className="seller-form-buttons">
-            <CustomButton type="submit">PREVIEW</CustomButton>
-            <CustomButton type="submit">UPLOAD</CustomButton>
-          </div>
+          <CustomButton>Upload photo</CustomButton>
         </form>
       </div>
-      <div className="new-items">
+      {/* <div className="new-items">
         {newItems.map((item) => (
           <CollectionItem item={item} />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };

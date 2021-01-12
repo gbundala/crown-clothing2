@@ -2,6 +2,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+import "firebase/storage";
 
 //MAIN CONFIG OBJECT FROM FIREBASE TO LINK OUR APP WITH OUR FIREBASE PROJECT
 const config = {
@@ -78,11 +79,28 @@ export const addCollectionAndDocuments = async (
 };
 
 //SELLER ADDING INDIVIDUAL DOCUMENTS OF ITEMS TO SHOP COLLECTION IN FIRESTORE
-export const addIndividualShopDocumentsInExistingCollections = async (
+export const addIndividualShopDocumentItems = async (
   collectionKey,
-  objectsToAdd
+  clothesDocRef,
+  name,
+  price,
+  imageUrl
 ) => {
+  console.log(`firebase method called for ${clothesDocRef}: `, name);
+  // const { imageUrl, name, price, collection } = objectToAdd;
+
   const collectionRef = firestore.collection(collectionKey);
+  const documentRef = collectionRef.doc(clothesDocRef);
+
+  await documentRef.update({
+    items: firebase.firestore.FieldValue.arrayUnion({
+      createdAt: new Date(),
+      id: Math.random().toString(4).slice(2),
+      imageUrl,
+      name,
+      price,
+    }),
+  });
 };
 
 //ADDING USER CARTITEMS TO FIRESTORE
@@ -197,10 +215,12 @@ export const getCurrentUser = () => {
   });
 };
 
+//FIREBASE CONFIGS
 firebase.initializeApp(config); //Initializes firebase
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
+export const storage = firebase.storage();
 
 //Gives us access to the auth Googleprovider class from authentication library
 export const googleProvider = new firebase.auth.GoogleAuthProvider();
