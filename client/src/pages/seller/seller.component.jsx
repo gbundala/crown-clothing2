@@ -10,6 +10,7 @@ import CollectionItem from "../../components/collection-item/collection-item.com
 import {
   collectionItemsStoreStart,
   fetchCollectionsStart,
+  sellerFileUploadStart,
 } from "../../redux/shop/shop.actions";
 
 //Formik Import
@@ -17,6 +18,9 @@ import { useField, Form, Formik } from "formik";
 import * as Yup from "yup";
 
 const Seller = () => {
+  //Image file upload states
+  const [imageURI, setImageURI] = useState(null);
+
   //Input Fields
   const MyInputField = (props) => {
     const [field, meta] = useField(props);
@@ -88,9 +92,21 @@ const Seller = () => {
     setSubmitting(false);
   };
 
-  const handleFileUpload = (event) => {
-    console.log(even.target);
-    // event.target.file[0]
+  // const handleFileUploadSubmission = (event) => {
+  //   // event.preventDefault();
+  // };
+
+  const handleFileUploadPreview = (event) => {
+    const file = URL.createObjectURL(event.target.files[0]);
+    console.log(file);
+
+    setImageURI(file);
+
+    console.log(event.target.files[0]);
+    const uploadFile = event.target.files[0];
+
+    dispatch(sellerFileUploadStart(uploadFile));
+    console.log("File uploaded: ", uploadFile);
   };
 
   //Rendering
@@ -151,9 +167,10 @@ const Seller = () => {
             id="fileButton"
             name="fileButton"
             type="file"
-            onChange={handleFileUpload}
+            onChange={handleFileUploadPreview}
           />
-          <CustomButton>Upload photo</CustomButton>
+          <img src={imageURI} height="215px" width="165px" />
+          <CustomButton type="submit">Upload photo</CustomButton>
         </form>
       </div>
       {/* <div className="new-items">

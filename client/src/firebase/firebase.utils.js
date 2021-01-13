@@ -1,4 +1,4 @@
-//IMPORTS
+//FIREBASE IMPORTS
 import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
@@ -101,6 +101,39 @@ export const addIndividualShopDocumentItems = async (
       price,
     }),
   });
+};
+
+//UPLOADING SELLER IMAGE/FILE TO STORAGE
+export const uploadSellerImageFileToStorage = async (imageFile) => {
+  console.log("Firebase method called: ", imageFile);
+
+  const imageRef = storage.ref(`sellerImage/${imageFile.name}`);
+
+  const uploadTask = imageRef.put(imageFile);
+
+  console.log("Upload task called: ", uploadTask);
+
+  uploadTask.on(
+    "state_changed",
+    //upload in progress
+    (snapshot) => {
+      const { bytesTransferred, totalBytes } = snapshot;
+      const progress = (bytesTransferred / totalBytes) * 100;
+      console.log("UPLOAD IN PROGRESS: ", progress);
+    },
+    //on error
+    (error) => {
+      console.error("Error in uploading progress: ", error);
+    },
+    //on successful upload
+    () => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadUrl) => {
+        console.log("File is available through URL: ", downloadUrl);
+      });
+    }
+  );
+
+  //TODO: useRef instead of props and actions
 };
 
 //ADDING USER CARTITEMS TO FIRESTORE

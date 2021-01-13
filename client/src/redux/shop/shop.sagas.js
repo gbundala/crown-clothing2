@@ -5,6 +5,7 @@ import {
   addIndividualShopDocumentItems,
   convertCollectionsSnapshotToMap,
   firestore,
+  uploadSellerImageFileToStorage,
 } from "../../firebase/firebase.utils";
 import {
   fetchCollectionsSuccess,
@@ -14,6 +15,7 @@ import {
   onCartItemsStoreStart,
   storeCartItemsInFirebase,
 } from "../cart/cart.sagas";
+import { sellerFileUploadStatus } from "../seller/seller.actions";
 
 //FETCH COLLECTIONS FROM FIREBASE TO THE APP
 export function* fetchCollectionsAsync() {
@@ -46,7 +48,23 @@ export function* storeCollectionItemsInFirebaseAsync({
     );
     console.log("Successsfully stored data in firestore");
   } catch (error) {
+    // FIXME: Put the redux action for failure
     console.error("Error in storing to Firebase: ", error);
+  }
+}
+
+//SELLER FILE UPLOAD TO FIREBASE STORAGE
+export function* uploadSellerFileToStorageAsync({ payload }) {
+  console.log("Saga is fired: ", payload);
+
+  try {
+    const progressStatus = yield call(uploadSellerImageFileToStorage, payload);
+
+    yield put(sellerFileUploadStatus(progressStatus));
+
+    console.log("Successfully uploaded an image");
+  } catch (error) {
+    console.error("Error in uploading file to Storage: ", error);
   }
 }
 
@@ -66,7 +84,19 @@ export function* onCollectionItemsStoreStart() {
   );
 }
 
+//INITIALIZATION SAGA TO START FILE UPLOAD BY SELLER
+export function* onSellerFileUploadStart() {
+  yield takeLatest(
+    ShopActionTypes.SELLER_FILE_UPLOAD_START,
+    uploadSellerFileToStorageAsync
+  );
+}
+
 //ROOT SHOP SAGA
 export function* shopSagas() {
-  yield all([call(fetchCollectionsStart), call(onCollectionItemsStoreStart)]);
+  yield all([
+    call(fetchCollectionsStart),
+    call(onCollectionItemsStoreStart),
+    call(onSellerFileUploadStart),
+  ]);
 }

@@ -36,6 +36,22 @@ export const collectionItemsStoreFailure = (error) => ({
   payload: error,
 });
 
+//ACTION METHODS TO UPLOAD FILE/IMAGE ON SELLER PAGE
+export const sellerFileUploadStart = (file) => ({
+  type: ShopActionTypes.SELLER_FILE_UPLOAD_START,
+  payload: file,
+});
+
+export const sellerFileUploadSuccess = (fileUrl) => ({
+  type: ShopActionTypes.SELLER_FILE_UPLOAD_SUCCESS,
+  payload: fileUrl,
+});
+
+export const sellerFileUploadFailure = (error) => ({
+  type: ShopActionTypes.SELLER_FILE_UPLOAD_FAILURE,
+  payload: error,
+});
+
 //TODO: Code below is no longer relevant -- it was used when learning thunk -- revise and remove it
 export const fetchCollectionsStartAsync = () => {
   return (dispatch) => {

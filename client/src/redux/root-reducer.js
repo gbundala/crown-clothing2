@@ -9,6 +9,7 @@ import cartReducer from "./cart/cart.reducer";
 import directoryReducer from "./directory/directory.reducer";
 import shopReducer from "./shop/shop.reducer";
 import likedReducer from "./liked/liked.reducer";
+import sellerReducer from "./seller/seller.reducer";
 
 //REDUX PERSIST
 const persistConfig = {
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   directory: directoryReducer,
   shop: shopReducer,
   liked: likedReducer,
+  seller: sellerReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);
