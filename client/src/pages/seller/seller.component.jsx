@@ -1,6 +1,6 @@
-// React Imports
+// React--Redux Imports
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // Imports from other files
 import "./seller.styles.scss";
@@ -9,7 +9,6 @@ import FormInput from "../../components/form-input/form-input.component";
 import CollectionItem from "../../components/collection-item/collection-item.component";
 import {
   collectionItemsStoreStart,
-  fetchCollectionsStart,
   sellerFileUploadStart,
 } from "../../redux/shop/shop.actions";
 
@@ -18,8 +17,9 @@ import { useField, Form, Formik } from "formik";
 import * as Yup from "yup";
 
 const Seller = () => {
-  //Image file upload states
+  //Image file upload states and progressBar selector
   const [imageURI, setImageURI] = useState(null);
+  const progressUpdate = useSelector((state) => state.seller.progress);
 
   //Input Fields
   const MyInputField = (props) => {
@@ -86,6 +86,7 @@ const Seller = () => {
   };
 
   const formikHandleSubmit = async (values, { setSubmitting }) => {
+    //FIXME: Remove unnecessary dispatches here
     console.log("Storing action to be fired");
     dispatch(collectionItemsStoreStart(values));
     console.log("Storing start action fired: ", values);
@@ -158,7 +159,7 @@ const Seller = () => {
           <progress
             id="uploadProgress"
             name="uploadProgress"
-            value="0"
+            value={progressUpdate}
             max="100"
           >
             0%

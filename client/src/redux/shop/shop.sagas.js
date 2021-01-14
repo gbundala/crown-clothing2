@@ -58,12 +58,11 @@ export function* uploadSellerFileToStorageAsync({ payload }) {
   console.log("Saga is fired: ", payload);
 
   try {
-    const progressStatus = yield call(uploadSellerImageFileToStorage, payload);
-
-    yield put(sellerFileUploadStatus(progressStatus));
+    yield call(uploadSellerImageFileToStorage, payload);
 
     console.log("Successfully uploaded an image");
   } catch (error) {
+    //TODO: Insert a put method to throw the error
     console.error("Error in uploading file to Storage: ", error);
   }
 }

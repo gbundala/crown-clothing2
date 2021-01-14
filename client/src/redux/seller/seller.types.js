@@ -1,5 +1,6 @@
 const SellerActionTypes = {
   SELLER_FILE_UPLOAD_STATUS: "SELLER_FILE_UPLOAD_STATUS",
+  SELLER_FILE_UPLOAD_COMPLETE: "SELLER_FILE_UPLOAD_COMPLETE",
 };
 
 export default SellerActionTypes;

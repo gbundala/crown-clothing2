@@ -4,6 +4,13 @@ import "firebase/firestore";
 import "firebase/auth";
 import "firebase/storage";
 
+//REDUX IMPORTS
+import { store } from "../redux/store";
+import {
+  sellerFileUploadComplete,
+  sellerFileUploadStatus,
+} from "../redux/seller/seller.actions";
+
 //MAIN CONFIG OBJECT FROM FIREBASE TO LINK OUR APP WITH OUR FIREBASE PROJECT
 const config = {
   apiKey: "AIzaSyBjUDdfvHbQXYWM4_mypKG_JE2MIm9r7mU",
@@ -113,27 +120,52 @@ export const uploadSellerImageFileToStorage = async (imageFile) => {
 
   console.log("Upload task called: ", uploadTask);
 
-  uploadTask.on(
-    "state_changed",
-    //upload in progress
-    (snapshot) => {
-      const { bytesTransferred, totalBytes } = snapshot;
-      const progress = (bytesTransferred / totalBytes) * 100;
-      console.log("UPLOAD IN PROGRESS: ", progress);
-    },
-    //on error
-    (error) => {
-      console.error("Error in uploading progress: ", error);
-    },
-    //on successful upload
-    () => {
-      uploadTask.snapshot.ref.getDownloadURL().then((downloadUrl) => {
-        console.log("File is available through URL: ", downloadUrl);
-      });
-    }
-  );
+  const next = (snapshot) => {
+    const { bytesTransferred, totalBytes } = snapshot;
+    const progress = (bytesTransferred / totalBytes) * 100;
+    console.log("UPLOAD IN PROGRESS: ", progress);
+    store.dispatch(sellerFileUploadStatus(progress));
+  };
 
-  //TODO: useRef instead of props and actions
+  const error = (error) => {
+    //TODO: Call the shop saga for error here
+    console.error("Error in uploading progress: ", error);
+  };
+
+  const complete = () => {
+    uploadTask.snapshot.ref.getDownloadURL().then((downloadUrl) => {
+      console.log("File is available through URL: ", downloadUrl);
+      store.dispatch(sellerFileUploadComplete(downloadUrl));
+    });
+  };
+
+  //ALTERNATIVE APPROACH
+  uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, {
+    next: next,
+    error: error,
+    complete: complete,
+  });
+
+  // const task = uploadTask.on(
+  //   "state_changed",
+  //   //upload in progress
+  //   (snapshot) => {
+  //     const { bytesTransferred, totalBytes } = snapshot;
+  //     const progress = (bytesTransferred / totalBytes) * 100;
+  //     console.log("UPLOAD IN PROGRESS: ", progress);
+  //     return progress;
+  //   },
+  //   //on error
+  //   (error) => {
+  //     console.error("Error in uploading progress: ", error);
+  //   },
+  //   //on successful upload
+  //   () => {
+  //     uploadTask.snapshot.ref.getDownloadURL().then((downloadUrl) => {
+  //       console.log("File is available through URL: ", downloadUrl);
+  //     });
+  //   }
+  // );
 };
 
 //ADDING USER CARTITEMS TO FIRESTORE
