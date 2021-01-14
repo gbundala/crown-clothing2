@@ -90,14 +90,18 @@ export const addIndividualShopDocumentItems = async (
   collectionKey,
   clothesDocRef,
   name,
-  price,
-  imageUrl
+  price
 ) => {
   console.log(`firebase method called for ${clothesDocRef}: `, name);
   // const { imageUrl, name, price, collection } = objectToAdd;
 
   const collectionRef = firestore.collection(collectionKey);
   const documentRef = collectionRef.doc(clothesDocRef);
+  function select(state) {
+    return state.seller.imageUrl;
+  }
+  const imageUrl = select(store.getState());
+  console.log("ImageURL called from the Store: ", imageUrl);
 
   await documentRef.update({
     items: firebase.firestore.FieldValue.arrayUnion({

@@ -98,6 +98,7 @@ const Seller = () => {
   // };
 
   const handleFileUploadPreview = (event) => {
+    //FIXME: Account for the momery leaks in using this API
     const file = URL.createObjectURL(event.target.files[0]);
     console.log(file);
 
@@ -132,6 +133,7 @@ const Seller = () => {
 
               <MyInputField name="price" type="number" label="price" />
 
+              {/* FIXME: Remove this and update the code */}
               <MyInputField name="imageUrl" type="url" label="Image Url" />
 
               <MySelect name="collection" label="Collection">
@@ -155,6 +157,7 @@ const Seller = () => {
           )}
         </Formik>
         <br></br>
+        {/* TODO: Should use Formik here and merge in the above form? */}
         <form className="uploader-form">
           <progress
             id="uploadProgress"

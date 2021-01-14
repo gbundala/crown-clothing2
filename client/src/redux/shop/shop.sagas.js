@@ -34,7 +34,7 @@ export function* fetchCollectionsAsync() {
 
 //STORING NEW COLLECTION ITEMS TO FIREBASE
 export function* storeCollectionItemsInFirebaseAsync({
-  payload: { name, price, imageUrl, collection },
+  payload: { name, price, collection },
 }) {
   console.log("Saga is fired");
   try {
@@ -43,8 +43,7 @@ export function* storeCollectionItemsInFirebaseAsync({
       "collections",
       collection,
       name,
-      price,
-      imageUrl
+      price
     );
     console.log("Successsfully stored data in firestore");
   } catch (error) {
