@@ -101,7 +101,12 @@ export const addIndividualShopDocumentItems = async (
     return state.seller.imageUrl;
   }
   const imageUrl = select(store.getState());
-  console.log("ImageURL called from the Store: ", imageUrl);
+
+  function selectUser(state) {
+    return state.user.currentUser;
+  }
+  const uploadedBy = selectUser(store.getState());
+  console.log("UPLOADED BY: ", uploadedBy);
 
   await documentRef.update({
     items: firebase.firestore.FieldValue.arrayUnion({
@@ -110,6 +115,7 @@ export const addIndividualShopDocumentItems = async (
       imageUrl,
       name,
       price,
+      uploadedBy,
     }),
   });
 };

@@ -107,6 +107,7 @@ const Seller = () => {
     console.log(event.target.files[0]);
     const uploadFile = event.target.files[0];
 
+    //FIXME: What is the alternative to using Firebase Storage and implement image optimization
     dispatch(sellerFileUploadStart(uploadFile));
     console.log("File uploaded: ", uploadFile);
   };
@@ -146,6 +147,7 @@ const Seller = () => {
               </MySelect>
 
               <div className="seller-form-buttons">
+                {/* TODO: update the disabled and isSubmitting */}
                 <CustomButton type="submit" disabled={isSubmitting}>
                   PREVIEW
                 </CustomButton>
@@ -157,7 +159,7 @@ const Seller = () => {
           )}
         </Formik>
         <br></br>
-        {/* TODO: Should use Formik here and merge in the above form? */}
+        {/* TODO: Should I use Formik here and merge in the above form? */}
         <form className="uploader-form">
           <progress
             id="uploadProgress"
