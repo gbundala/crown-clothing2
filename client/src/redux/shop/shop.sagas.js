@@ -1,8 +1,9 @@
 //IMPORTS
-import { takeLatest, call, put, all } from "redux-saga/effects";
+import { takeLatest, call, put, all, select } from "redux-saga/effects";
 import ShopActionTypes from "./shop.types";
 import {
   addIndividualShopDocumentItems,
+  addIndividualShopDocumentItemsToMyUserDoc,
   convertCollectionsSnapshotToMap,
   firestore,
   uploadSellerImageFileToStorage,
@@ -16,6 +17,7 @@ import {
   storeCartItemsInFirebase,
 } from "../cart/cart.sagas";
 import { sellerFileUploadStatus } from "../seller/seller.actions";
+import { selectCurrentUser } from "../user/user.selector";
 
 //FETCH COLLECTIONS FROM FIREBASE TO THE APP
 export function* fetchCollectionsAsync() {
@@ -37,14 +39,28 @@ export function* storeCollectionItemsInFirebaseAsync({
   payload: { name, price, collection },
 }) {
   console.log("Saga is fired");
+
   try {
-    yield call(
-      addIndividualShopDocumentItems,
-      "collections",
-      collection,
-      name,
-      price
-    );
+    const user = yield select(selectCurrentUser);
+    if (!user) return;
+
+    yield all([
+      call(
+        addIndividualShopDocumentItems,
+        "collections",
+        collection,
+        name,
+        price
+      ),
+      call(
+        addIndividualShopDocumentItemsToMyUserDoc,
+        user,
+        "sellerCollections",
+        collection,
+        name,
+        price
+      ),
+    ]);
     console.log("Successsfully stored data in firestore");
   } catch (error) {
     // FIXME: Put the redux action for failure

@@ -63,16 +63,9 @@ const Seller = () => {
       .required("Required")
       .integer("Must be an integer")
       .positive("Must be a positive integer"),
-    imageUrl: Yup.string().url("Must be URL").required("Required"),
     collection: Yup.string()
       .oneOf(
-        [
-          "Czx1Zdbee5NA1rcKExMI",
-          "ZsECPU5cs5rMJihxzgzh",
-          "ELkNhPZaZMEFvMqnI8XP",
-          "CUbKnZZ0qf0055Fz4K9h",
-          "CeJTRVox79x7klhmsmBP",
-        ],
+        ["hats", "jackets", "sneakers", "mens", "womens"],
         "Invalid Collection"
       )
       .required("Required"),
@@ -81,7 +74,6 @@ const Seller = () => {
   const initialValues = {
     name: "",
     price: "",
-    imageUrl: "",
     collection: "",
   };
 
@@ -134,16 +126,13 @@ const Seller = () => {
 
               <MyInputField name="price" type="number" label="price" />
 
-              {/* FIXME: Remove this and update the code */}
-              <MyInputField name="imageUrl" type="url" label="Image Url" />
-
               <MySelect name="collection" label="Collection">
                 <option value="">Select a collection</option>
-                <option value="Czx1Zdbee5NA1rcKExMI">Hats</option>
-                <option value="ZsECPU5cs5rMJihxzgzh">Jackets</option>
-                <option value="ELkNhPZaZMEFvMqnI8XP">Sneakers</option>
-                <option value="CUbKnZZ0qf0055Fz4K9h">Womens</option>
-                <option value="CeJTRVox79x7klhmsmBP">Mens</option>
+                <option value="hats">Hats</option>
+                <option value="jackets">Jackets</option>
+                <option value="sneakers">Sneakers</option>
+                <option value="womens">Womens</option>
+                <option value="mens">Mens</option>
               </MySelect>
 
               <div className="seller-form-buttons">
@@ -175,6 +164,7 @@ const Seller = () => {
             type="file"
             onChange={handleFileUploadPreview}
           />
+          {/* FIXME: Specify the max size of file to be uploaded. We don't want to be grappling with massive image files in our DB -- which could also be a security risk */}
           <img src={imageURI} height="215px" width="165px" />
           <CustomButton type="submit">Upload photo</CustomButton>
         </form>

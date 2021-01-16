@@ -88,13 +88,19 @@ export const addCollectionAndDocuments = async (
 //SELLER ADDING INDIVIDUAL DOCUMENTS OF ITEMS TO SHOP COLLECTION IN FIRESTORE
 export const addIndividualShopDocumentItems = async (
   collectionKey,
-  clothesDocRef,
+  rawClothesDocRef,
   name,
   price
 ) => {
-  console.log(`firebase method called for ${clothesDocRef}: `, name);
-  // const { imageUrl, name, price, collection } = objectToAdd;
+  const mappedDocRef = {
+    womens: "CUbKnZZ0qf0055Fz4K9h",
+    mens: "CeJTRVox79x7klhmsmBP",
+    hats: "Czx1Zdbee5NA1rcKExMI",
+    sneakers: "ELkNhPZaZMEFvMqnI8XP",
+    jackets: "ZsECPU5cs5rMJihxzgzh",
+  };
 
+  const clothesDocRef = mappedDocRef[`${rawClothesDocRef}`];
   const collectionRef = firestore.collection(collectionKey);
   const documentRef = collectionRef.doc(clothesDocRef);
   function select(state) {
@@ -103,11 +109,12 @@ export const addIndividualShopDocumentItems = async (
   const imageUrl = select(store.getState());
 
   function selectUser(state) {
-    return state.user.currentUser;
+    return state.user.currentUser.email;
   }
   const uploadedBy = selectUser(store.getState());
   console.log("UPLOADED BY: ", uploadedBy);
 
+  // TODO: Consider the quantity in store field if necessary
   await documentRef.update({
     items: firebase.firestore.FieldValue.arrayUnion({
       createdAt: new Date(),
@@ -115,9 +122,77 @@ export const addIndividualShopDocumentItems = async (
       imageUrl,
       name,
       price,
-      uploadedBy,
+      uploadedBy, //TODO: store the email only in this field
+      // qtyInStore,
     }),
   });
+};
+
+//SELLER ADDING INDIVIDUAL DOCUMENTS OF SHOP ITEMS TO HIS/HER USER DOC AS A SEPARATE COLLECTION
+export const addIndividualShopDocumentItemsToMyUserDoc = async (
+  user,
+  sellerCollectionKey,
+  rawClothesDocRef,
+  name,
+  price
+) => {
+  if (!user) return;
+
+  const sellerCollectionRef = firestore.collection(
+    `users/${user.id}/${sellerCollectionKey}`
+  );
+  const documentRef = sellerCollectionRef.doc(rawClothesDocRef);
+  const documentSnapshot = await documentRef.get();
+
+  const select = (state) => state.seller.imageUrl;
+  const imageUrl = select(store.getState());
+
+  //Run if the document does not exist to set it
+  if (!documentSnapshot.exists) {
+    try {
+      await documentRef.set(
+        {
+          items: [
+            {
+              createdAt: new Date(),
+              id: Math.random().toString(4).slice(2),
+              imageUrl,
+              name,
+              price,
+              // qtyInStore,
+            },
+          ],
+          title: rawClothesDocRef,
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.error(
+        "Error in creating a new seller doc in user",
+        error.message
+      );
+    }
+  }
+
+  // FIXME: Check if this code runs immediately after the above
+  //Run if the document exists to update the items array
+  try {
+    await documentRef.update({
+      items: firebase.firestore.FieldValue.arrayUnion({
+        createdAt: new Date(),
+        id: Math.random().toString(4).slice(2),
+        imageUrl,
+        name,
+        price,
+        // qtyInStore,
+      }),
+    });
+  } catch (error) {
+    console.error(
+      "Error in creating updating the seller doc in user",
+      error.message
+    );
+  }
 };
 
 //UPLOADING SELLER IMAGE/FILE TO STORAGE
