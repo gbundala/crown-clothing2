@@ -174,7 +174,7 @@ export const addIndividualShopDocumentItemsToMyUserDoc = async (
     }
   }
 
-  // FIXME: Check if this code runs immediately after the above
+  // FIXME: Check if this code runs immediately after the above. Maybe use an else statement for the below code
   //Run if the document exists to update the items array
   try {
     await documentRef.update({

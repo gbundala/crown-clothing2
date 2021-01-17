@@ -1,5 +1,5 @@
 // React--Redux Imports
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Imports from other files
@@ -15,11 +15,18 @@ import {
 //Formik Import
 import { useField, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { fetchSellerCollectionsStart } from "../../redux/seller/seller.actions";
 
 const Seller = () => {
   //Image file upload states and progressBar selector
   const [imageURI, setImageURI] = useState(null);
   const progressUpdate = useSelector((state) => state.seller.progress);
+  const dispatch = useDispatch();
+
+  //Fire upon component mounting to the dom
+  useEffect(() => {
+    dispatch(fetchSellerCollectionsStart());
+  }, []);
 
   //Input Fields
   const MyInputField = (props) => {
@@ -52,7 +59,8 @@ const Seller = () => {
   };
 
   //useDispatch react-redux binding
-  const dispatch = useDispatch();
+  //FIXME: Already declared above, remove this
+  // const dispatch = useDispatch();
 
   //Formik Props
   const yupSchema = Yup.object({
