@@ -16,3 +16,8 @@ export const sellerFileUploadComplete = (imageUrl) => ({
 export const fetchSellerCollectionsStart = () => ({
   type: SellerActionTypes.FETCH_SELLER_COLLECTIONS_START,
 });
+
+export const fetchSellerCollectionsSuccess = (collectionsMap) => ({
+  type: SellerActionTypes.FETCH_SELLER_COLLECTIONS_SUCCESS,
+  payload: collectionsMap,
+});

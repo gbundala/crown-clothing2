@@ -1,19 +1,31 @@
-import { all, call, select, takeLatest } from "redux-saga/effects";
-import { firestore } from "../../firebase/firebase.utils";
+import { all, call, put, select, takeLatest } from "redux-saga/effects";
+import {
+  convertCollectionsSnapshotToMap,
+  firestore,
+} from "../../firebase/firebase.utils";
 import { selectCurrentUser } from "../user/user.selector";
+import { fetchSellerCollectionsSuccess } from "./seller.actions";
 import SellerActionTypes from "./seller.types";
 
 //FETCH SELLER COLLECTIONS FROM THE USER(SELLER) DOCUMENT IN FIRESTORE
 export function* fetchSellerCollectionsAsync() {
   try {
     const user = yield select(selectCurrentUser);
+    if (!user) return;
     const collectionRef = firestore.collection(
       `users/${user.id}/sellerCollections`
     );
     const snapshot = yield collectionRef.get();
-    console.log("Lets see the sellerCollection snap: ", snapshot);
+    const sellerCollectionsMap = yield call(
+      convertCollectionsSnapshotToMap,
+      snapshot
+    );
+    console.log("Lets see the sellerCollection snap: ", sellerCollectionsMap);
+    yield put(fetchSellerCollectionsSuccess(sellerCollectionsMap));
+
+    //TODO: Call the convertCollectionsSnapshotToMap method exactly as the one called in shop sagas and implement the View/UI layer similar to shopOverview page
   } catch (err) {
-    console.error("Error in fetching seller collections", err);
+    console.error("Error in fetching seller collections: ", err);
   }
 }
 

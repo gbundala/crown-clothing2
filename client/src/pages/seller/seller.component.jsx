@@ -11,8 +11,9 @@ import {
   collectionItemsStoreStart,
   sellerFileUploadStart,
 } from "../../redux/shop/shop.actions";
+import CollectionPreview from "../../components/collection-preview/collection-preview.component";
 
-//Formik Import
+//Formik Imports
 import { useField, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { fetchSellerCollectionsStart } from "../../redux/seller/seller.actions";
@@ -22,6 +23,15 @@ const Seller = () => {
   const [imageURI, setImageURI] = useState(null);
   const progressUpdate = useSelector((state) => state.seller.progress);
   const dispatch = useDispatch();
+
+  //Seller collection items selector
+  const sellerCollections = useSelector((state) =>
+    state.seller.sellerCollections
+      ? Object.keys(state.seller.sellerCollections).map(
+          (key) => state.seller.sellerCollections[key]
+        )
+      : []
+  );
 
   //Fire upon component mounting to the dom
   useEffect(() => {
@@ -177,11 +187,14 @@ const Seller = () => {
           <CustomButton type="submit">Upload photo</CustomButton>
         </form>
       </div>
-      {/* <div className="new-items">
-        {newItems.map((item) => (
-          <CollectionItem item={item} />
+      {/* TODO: Bring in the knowledge of fetching the data from firestore similar to the shop page here. Only difference is that here we are fetching the list from the users collection in the selleritems subcollection. When the seller page is mounted seller items are pulled! */}
+      <div className="new-items">
+        {sellerCollections.map(({ id, ...otherCollectionProps }) => (
+          <CollectionPreview key={id} {...otherCollectionProps} />
         ))}
-      </div> */}
+      </div>
+
+      {/* TODO: Add a feature for the seller to be able to delete an item, which shold also delete it in the shop collection in firestore */}
     </div>
   );
 };

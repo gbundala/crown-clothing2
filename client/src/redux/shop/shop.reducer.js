@@ -26,12 +26,15 @@ const shopReducer = (state = INITAL_STATE, action) => {
         isFetching: false,
         errorMessage: action.payload,
       };
+
     // Store Collections Reducers
     case ShopActionTypes.COLLECTION_ITEMS_STORE_FAILURE:
       return {
         ...state,
         errorMessage: action.payload,
       };
+
+    // Default fall back
     default:
       return state;
   }
